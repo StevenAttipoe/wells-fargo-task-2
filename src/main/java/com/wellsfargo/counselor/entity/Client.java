@@ -1,21 +1,16 @@
 package com.wellsfargo.counselor.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.CascadeType;
 
 import java.util.List;
 
 @Entity
-public class Advisor {
-
+public class Client {
     @Id
     @GeneratedValue()
-    private long advisorId;
+    private long clientId;
 
     @Column(nullable = false)
     private String firstName;
@@ -32,23 +27,29 @@ public class Advisor {
     @Column(nullable = false)
     private String email;
 
-    @OneToMany(mappedBy="advisor", cascade = CascadeType.ALL)
-    private List<Client> clients;
+    @JoinColumn(name = "advisor_id", referencedColumnName = "advisor_id")
+    private Advisor advisor;
 
-    protected Advisor() {
+    @JsonIgnore
+    @OneToMany(mappedBy="client", cascade = CascadeType.ALL)
+    private List<Portfolio> portfolios;
 
-    }
-
-    public Advisor(String firstName, String lastName, String address, String phone, String email) {
+    public Client(long clientId, String firstName, String lastName, String address, String phone, String email, Advisor advisor) {
+        this.clientId = clientId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.phone = phone;
         this.email = email;
+        this.advisor = advisor;
     }
 
-    public Long getAdvisorId() {
-        return advisorId;
+    public long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(long clientId) {
+        this.clientId = clientId;
     }
 
     public String getFirstName() {
@@ -89,5 +90,13 @@ public class Advisor {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Advisor getAdvisor() {
+        return advisor;
+    }
+
+    public void setAdvisor(Advisor advisor) {
+        this.advisor = advisor;
     }
 }
